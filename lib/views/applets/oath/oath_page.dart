@@ -106,11 +106,12 @@ class _OathPageState extends State<OathPage> with UIMixin {
                           ? controller.oathMap
                           : Map.fromEntries(controller.oathMap.entries.where((entry) => entry.key.toLowerCase().contains(searchText.value.toLowerCase())));
                       if (filteredMap.isEmpty) return Center(child: CustomizedText.bodyMedium(S.of(context).noMatchingCredential, fontSize: 24));
+                      final sortedNames = filteredMap.keys.toList()..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
                       return GridView.builder(
                         physics: ScrollPhysics(),
                         shrinkWrap: true,
                         scrollDirection: Axis.vertical,
-                        itemCount: filteredMap.length,
+                        itemCount: sortedNames.length,
                         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                           maxCrossAxisExtent: 500,
                           crossAxisSpacing: 16,
@@ -118,7 +119,7 @@ class _OathPageState extends State<OathPage> with UIMixin {
                           mainAxisExtent: 150,
                         ),
                         itemBuilder: (context, index) {
-                          String name = filteredMap.keys.toList()[index];
+                          String name = sortedNames[index];
                           return OathItemCard(
                             name: name,
                             item: filteredMap[name]!,

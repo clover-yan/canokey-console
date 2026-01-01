@@ -7,6 +7,7 @@ import 'package:canokey_console/helper/widgets/poll_canokey_screen.dart';
 import 'package:canokey_console/helper/widgets/responsive.dart';
 import 'package:canokey_console/helper/widgets/search_box.dart';
 import 'package:canokey_console/helper/widgets/spacing.dart';
+import 'package:canokey_console/models/webauthn.dart';
 import 'package:canokey_console/views/applets/webauthn/widgets/top_actions.dart';
 import 'package:canokey_console/views/applets/webauthn/widgets/webauthn_item_card.dart';
 import 'package:canokey_console/views/layout/layout.dart';
@@ -67,11 +68,16 @@ class _WebAuthnPageState extends State<WebAuthnPage> with SingleTickerProviderSt
                                   item.userDisplayName.toLowerCase().contains(searchText.value.toLowerCase()))
                               .toList();
                       if (filteredItems.isEmpty) return Center(child: CustomizedText.bodyMedium(S.of(context).noMatchingCredential, fontSize: 24));
+                      final sortedItems = List<WebAuthnItem>.from(filteredItems)..sort((a, b) {
+                        final aName = a.userDisplayName.isEmpty ? a.rpId : a.userDisplayName;
+                        final bName = b.userDisplayName.isEmpty ? b.rpId : b.userDisplayName;
+                        return aName.toLowerCase().compareTo(bName.toLowerCase());
+                      });
                       return GridView.builder(
                         physics: ScrollPhysics(),
                         shrinkWrap: true,
                         scrollDirection: Axis.vertical,
-                        itemCount: filteredItems.length,
+                        itemCount: sortedItems.length,
                         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                           maxCrossAxisExtent: 500,
                           crossAxisSpacing: 16,
@@ -79,7 +85,7 @@ class _WebAuthnPageState extends State<WebAuthnPage> with SingleTickerProviderSt
                           mainAxisExtent: 120,
                         ),
                         itemBuilder: (context, index) => WebAuthnItemCard(
-                          item: filteredItems[index],
+                          item: sortedItems[index],
                           controller: controller,
                         ),
                       );
