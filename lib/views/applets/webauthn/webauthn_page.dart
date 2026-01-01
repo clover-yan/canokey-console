@@ -1,5 +1,6 @@
 import 'package:canokey_console/controller/applets/webauthn/webauthn_controller.dart';
 import 'package:canokey_console/generated/l10n.dart';
+import 'package:canokey_console/helper/storage/local_storage.dart';
 import 'package:canokey_console/helper/theme/admin_theme.dart';
 import 'package:canokey_console/helper/utils/ui_mixins.dart';
 import 'package:canokey_console/helper/widgets/customized_text.dart';
@@ -29,11 +30,27 @@ class _WebAuthnPageState extends State<WebAuthnPage> with SingleTickerProviderSt
   final RxBool sortAlphabetically = false.obs;
   final GlobalKey<FormState> _searchFormKey = GlobalKey<FormState>();
 
+  late final Worker _sortWorker;
+
   @override
   void initState() {
     super.initState();
     Get.put(searchText, tag: 'webauthn_search');
     Get.put(sortAlphabetically, tag: 'webauthn_sort');
+    
+    // Load saved preference
+    sortAlphabetically.value = LocalStorage.getWebAuthnSortAlphabetically();
+    
+    // Save preference when it changes
+    _sortWorker = ever(sortAlphabetically, (bool value) {
+      LocalStorage.setWebAuthnSortAlphabetically(value);
+    });
+  }
+
+  @override
+  void dispose() {
+    _sortWorker.dispose();
+    super.dispose();
   }
 
   @override

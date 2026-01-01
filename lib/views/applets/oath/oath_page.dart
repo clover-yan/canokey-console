@@ -1,6 +1,7 @@
 import 'package:canokey_console/controller/applets/oath/oath_controller.dart';
 import 'package:canokey_console/controller/applets/oath/qr_scan_result.dart';
 import 'package:canokey_console/generated/l10n.dart';
+import 'package:canokey_console/helper/storage/local_storage.dart';
 import 'package:canokey_console/helper/theme/admin_theme.dart';
 import 'package:canokey_console/helper/utils/logging.dart';
 import 'package:canokey_console/helper/utils/prompts.dart';
@@ -38,12 +39,22 @@ class _OathPageState extends State<OathPage> with UIMixin {
   final GlobalKey<FormState> _searchFormKey = GlobalKey<FormState>();
 
   late final Worker _qrScanWorker;
+  late final Worker _sortWorker;
 
   @override
   void initState() {
     super.initState();
     Get.put(searchText, tag: 'oath_search');
     Get.put(sortAlphabetically, tag: 'oath_sort');
+    
+    // Load saved preference
+    sortAlphabetically.value = LocalStorage.getOathSortAlphabetically();
+    
+    // Save preference when it changes
+    _sortWorker = ever(sortAlphabetically, (bool value) {
+      LocalStorage.setOathSortAlphabetically(value);
+    });
+    
     _qrScanWorker = ever(
       controller.qrScanResult,
       (QrScanResult? result) {
@@ -66,6 +77,7 @@ class _OathPageState extends State<OathPage> with UIMixin {
   @override
   void dispose() {
     _qrScanWorker.dispose();
+    _sortWorker.dispose();
     super.dispose();
   }
 
