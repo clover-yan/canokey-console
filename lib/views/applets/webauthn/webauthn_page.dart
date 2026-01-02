@@ -105,9 +105,16 @@ class _WebAuthnPageState extends State<WebAuthnPage> with SingleTickerProviderSt
                       final items = List<WebAuthnItem>.from(filteredItems);
                       if (sortAlphabetically.value) {
                         items.sort((a, b) {
-                          final aName = a.userDisplayName.isEmpty ? a.rpId : a.userDisplayName;
-                          final bName = b.userDisplayName.isEmpty ? b.rpId : b.userDisplayName;
-                          return aName.toLowerCase().compareTo(bName.toLowerCase());
+                          final aRpId = a.rpId.split('.').reversed.toList();
+                          final bRpId = b.rpId.split('.').reversed.toList();
+                          for (int i = 0; i < aRpId.length && i < bRpId.length; i++) {
+                            final aRpIdChip = aRpId[i <= 1 ? 1 - i : i];
+                            final bRpIdChip = bRpId[i <= 1 ? 1 - i : i];
+                            if (aRpIdChip != bRpIdChip) {
+                              return aRpIdChip.compareTo(bRpIdChip);
+                            }
+                          }
+                          return a.userName.compareTo(b.userName);
                         });
                       }
                       return GridView.builder(
