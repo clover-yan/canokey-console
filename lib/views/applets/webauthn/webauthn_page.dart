@@ -110,10 +110,13 @@ class _WebAuthnPageState extends State<WebAuthnPage> with SingleTickerProviderSt
                             final aRpIdChip = aRpId[i <= 1 ? 1 - i : i];
                             final bRpIdChip = bRpId[i <= 1 ? 1 - i : i];
                             if (aRpIdChip != bRpIdChip) {
-                              return aRpIdChip.compareTo(bRpIdChip);
+                              return aRpIdChip.toLowerCase().compareTo(bRpIdChip.toLowerCase());
                             }
                           }
-                          return a.userName.compareTo(b.userName);
+                          if (aRpId.length != bRpId.length) {
+                            return aRpId.length.compareTo(bRpId.length);
+                          }
+                          return a.userName.toLowerCase().compareTo(b.userName.toLowerCase());
                         });
                       }
                       return GridView.builder(
