@@ -49,6 +49,8 @@ class _WebAuthnPageState extends State<WebAuthnPage> with SingleTickerProviderSt
   @override
   void dispose() {
     _sortWorker.dispose();
+    Get.delete<RxString>(tag: 'webauthn_search');
+    Get.delete<RxBool>(tag: 'webauthn_sort');
     super.dispose();
   }
 

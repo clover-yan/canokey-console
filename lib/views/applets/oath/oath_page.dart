@@ -78,6 +78,8 @@ class _OathPageState extends State<OathPage> with UIMixin {
   void dispose() {
     _qrScanWorker.dispose();
     _sortWorker.dispose();
+    Get.delete<RxString>(tag: 'oath_search');
+    Get.delete<RxBool>(tag: 'oath_sort');
     super.dispose();
   }
 
